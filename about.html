@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="shortcut icon" href="http://static.tumblr.com/nq57dhw/jLRoo0no3/apple-touch-icon-72x72.png">
+
+	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Playfair+Display:400,700' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Cardo:400,400italic' rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
+	<link rel="stylesheet" href="css/style.css"> <!-- Resource style -->
+	<link rel="stylesheet" href="css/component.css"> <!-- Resource style -->
+	<script src="js/modernizr.js"></script> <!-- Modernizr -->
+
+	<title>About Me</title>
+</head>
+<body>
+	<header class="cd-header">
+		<div class="cd-logo"><a href="index.html"><img src="http://static.tumblr.com/nq57dhw/BgPoo0myf/logo-elegant.png" alt="Logo"></a></div>
+
+		<a class="cd-primary-nav-trigger" href="#0">
+			<span class="cd-menu-text">Menu</span><span class="cd-menu-icon"></span>
+		</a> <!-- cd-primary-nav-trigger -->
+	</header>
+
+	<nav>
+		<ul class="cd-primary-nav">
+			<li class="cd-label">Who</li>
+
+			<li><a href="about.html">About ME</a></li>
+
+			<li class="cd-label">What</li>
+
+			<li><a href="work.html">See My Projects</a></li>
+			<li><a href="Project.html">Project Page</a></li>
+
+			<li class="cd-label">Where</li>
+
+			<li><a href="contact.html">Contact ME</a></li>
+
+			<li class="cd-label">Follow ME</li>
+
+			<li class="cd-social cd-instagram"><a href="https://www.instagram.com/alex.kw0k/">Instagram</a></li>
+			<li class="cd-social cd-dribbble"><a href="https://www.snapchat.com/add/alexfkwok/hQWZf">Snapchat</a></li>
+			<li class="cd-social cd-twitter"><a href="https://twitter.com/alexfkwok">Twitter</a></li>
+		</ul>
+	</nav>
+
+	<section class="cd-intro-about">
+		<h1><a href="#more"><img src="http://cdn.onnoschwanen.com/images/ui/arrow-down.svg"/></a></h1>
+	</section>
+
+	<main class="cd-main-content-about">
+		<div id="more" class="cd-container" style="margin-bottom: 0px;">
+
+
+<!-- Section 1 (Short text about) -->
+
+			<div class="cd-container-txt">
+				<p>
+				Hi, I'm Alexander Kwok and I'm a student in NYC specializing in User Interface/User Experience design, branding, and photography. Simply put, I craft beautiful content and designing unique UI or UX’s mostly for branding purposes. I also have a passion for other things beside deign, which includes Traveling across the world. From a young age, I have traveled from New York to many of the major cities in Asia and in Europe, which has showed me the true culture of these places.
+				</p>
+			</div>
+		</div>
+
+
+<!-- Section 2 (Services) -->
+
+			<div class="cd-main-services">
+				<div class="cd-main-content-services-img">
+					<img src="http://static.tumblr.com/nq57dhw/H8Vooz3l5/william-iven-19843.jpg">
+				</div>
+				<div class="cd-main-content-services-txt">
+						<h1>Services</h1>
+					<div class="cd-main-content-services-txt-clmn">
+						<div class="cd-main-content-services-txt-clmn-1">
+							<p>I'll work with you to define a strong visual identity. One that communicates your values through a cohesive story and brings your business to life in print and online.</p>
+						</div>
+						<div class="cd-main-content-services-txt-clmn-2">
+							<p>→  Branding <br>
+							   →  Web & Digital Design <br>
+								 →  Mobile Design <br>
+							   →  UI Design <br>
+							   →  UX Design <br>
+								 →  Front End Devolpment <br>
+							   →  Photography</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+		<!-- Section 3 (Footer) -->
+
+		<div class="footer">
+			<div class="footer-content">
+				<div class="footer-clmn1">© 2017 <a href="http://alexfkwok.com">Alex F. Kwok</a></div>
+				<div class="footer-clmn2">Email: <a href="mailto:alexfkwok@gmail.com">alexfkwok@gmail.com</a></div>
+			</div>
+		</div>
+
+	</main>
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="js/jquery-2.1.1.js"></script>
+<script src="js/main.js"></script> <!-- Resource jQuery -->
+
+<!-- Script for smooth scrolling -->
+<script>
+$(function() {
+  $('a[href*=#]:not([href=#])').click(function() {
+    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+      var target = $(this.hash);
+      target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+      if (target.length) {
+        $('html,body').animate({
+          scrollTop: target.offset().top
+        }, 1000);
+        return false;
+      }
+    }
+  });
+});
+</script>
+
+</body>
+</html>

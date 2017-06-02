@@ -1,361 +1,281 @@
-/* ===================================================================
- * Howdy - Main JS
- *
- * ------------------------------------------------------------------- */ 
+jQuery(document).ready(function($){
+	//if you change this breakpoint in the style.css file (or _layout.scss if you use SASS), don't forget to update this value as well
+	var MQL = 1170;
 
-(function($) {
+	//primary navigation slide-in effect
+	if($(window).width() > MQL) {
+		var headerHeight = $('.cd-header').height();
+		$(window).on('scroll',
+		{
+	        previousTop: 0
+	    },
+	    function () {
+		    var currentTop = $(window).scrollTop();
+		    //check if user is scrolling up
+		    if (currentTop < this.previousTop ) {
+		    	//if scrolling up...
+		    	if (currentTop > 0 && $('.cd-header').hasClass('is-fixed')) {
+		    		$('.cd-header').addClass('is-visible');
+		    	} else {
+		    		$('.cd-header').removeClass('is-visible is-fixed');
+		    	}
+		    } else {
+		    	//if scrolling down...
+		    	$('.cd-header').removeClass('is-visible');
+		    	if( currentTop > headerHeight && !$('.cd-header').hasClass('is-fixed')) $('.cd-header').addClass('is-fixed');
+		    }
+		    this.previousTop = currentTop;
+		});
+	}
 
-	"use strict";
+	//open/close primary navigation
+	$('.cd-primary-nav-trigger').on('click', function(){
+		$('.cd-menu-icon').toggleClass('is-clicked');
+		$('.cd-header').toggleClass('menu-is-open');
 
-	var cfg = {		
-		defAnimation   : "fadeInUp",    // default css animation		
-		scrollDuration : 800,           // smoothscroll duration
-		statsDuration  : 4000           // stats animation duration
-	},	
-	$WIN = $(window);
-
-	
-	/* Preloader 
-	 * -------------------------------------------------- */
-	var ssPreloader = function() {
-
-		$WIN.on('load', function() {	
-
-			// force page scroll position to top at page refresh
-			$('html, body').animate({ scrollTop: 0 }, 'normal');
-
-	      // will first fade out the loading animation 
-	    	$("#loader").fadeOut("slow", function(){
-
-	        // will fade out the whole DIV that covers the website.
-	        $("#preloader").delay(300).fadeOut("slow");
-
-	      }); 
-	  	});
-	}; 
-
-
-	/* FitVids
-	------------------------------------------------------ */ 
-	var ssFitVids = function() {
-		$(".fluid-video-wrapper").fitVids();
-	};  		
-
-   
-	/*	Masonry
-	------------------------------------------------------ */
-	var ssMasonryFolio = function() {
-
-		var containerBricks = $('.bricks-wrapper');
-
-		containerBricks.imagesLoaded( function() {
-			containerBricks.masonry( {	
-			  	itemSelector: '.brick',
-			  	resize: true
+		//in firefox transitions break when parent overflow is changed, so we need to wait for the end of the trasition to give the body an overflow hidden
+		if( $('.cd-primary-nav').hasClass('is-visible') ) {
+			$('.cd-primary-nav').removeClass('is-visible').one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',function(){
+				$('body').removeClass('overflow-hidden');
 			});
-		});
-	};
-
-
-	/*	Light Gallery
-	------------------------------------------------------- */
-	var ssLightGallery = function() {
-
-		$('#folio-wrap').lightGallery({  
-			showThumbByDefault: false,
-			hash: false,
-			selector: ".item-wrap"		
-		});
-	};
-
-
-  	/* Menu on Scrolldown
-	 * ------------------------------------------------------ */
-	var ssMenuOnScrolldown = function() {
-
-		var menuTrigger = $('#header-menu-trigger');
-
-		$WIN.on('scroll', function() {
-
-			if ($WIN.scrollTop() > 150) {				
-				menuTrigger.addClass('opaque');
-			}
-			else {				
-				menuTrigger.removeClass('opaque');
-			}
-
-		}); 
-	};
-
-	
-  	/* OffCanvas Menu
-	 * ------------------------------------------------------ */
-   var ssOffCanvas = function() {
-
-	       var menuTrigger = $('#header-menu-trigger'),
-	       nav             = $('#menu-nav-wrap'),
-	       closeButton     = nav.find('.close-button'),
-	       siteBody        = $('body'),
-	       mainContents    = $('section, footer');
-
-		// open-close menu by clicking on the menu icon
-		menuTrigger.on('click', function(e){
-			e.preventDefault();
-			menuTrigger.toggleClass('is-clicked');
-			siteBody.toggleClass('menu-is-open');
-		});
-
-		// close menu by clicking the close button
-		closeButton.on('click', function(e){
-			e.preventDefault();
-			menuTrigger.trigger('click');	
-		});
-
-		// close menu clicking outside the menu itself
-		siteBody.on('click', function(e){		
-			if( !$(e.target).is('#menu-nav-wrap, #header-menu-trigger, #header-menu-trigger span') ) {
-				menuTrigger.removeClass('is-clicked');
-				siteBody.removeClass('menu-is-open');
-			}
-		});
-
-   };
-
-
-  /* Smooth Scrolling
-	* ------------------------------------------------------ */
-	var ssSmoothScroll = function() {
-
-		$('.smoothscroll').on('click', function (e) {
-			var target = this.hash,
-			$target    = $(target);
-	 	
-		 	e.preventDefault();
-		 	e.stopPropagation();	   	
-
-	    	$('html, body').stop().animate({
-	       	'scrollTop': $target.offset().top
-	      }, cfg.scrollDuration, 'swing').promise().done(function () {
-
-	      	// check if menu is open
-	      	if ($('body').hasClass('menu-is-open')) {
-					$('#header-menu-trigger').trigger('click');
-				}
-
-	      	window.location.hash = target;
-	      });
-	  	});
-
-	};
-
-
-  /* Placeholder Plugin Settings
-	* ------------------------------------------------------ */
-	var ssPlaceholder = function() {
-		$('input, textarea, select').placeholder();  
-	};
-
-
-  /* Stat Counter
-  	*------------------------------------------------------- */
-  	var ssStatCounter = function() {
-
-	   var statSection = $("#stats"),
-	   stats           = $(".stat-count");
-
-	   statSection.waypoint({
-	   	handler: function(direction) {
-
-	      	if (direction === "down") { 
-				   stats.each(function () {
-					   var $this = $(this);
-
-					   $({ Counter: 0 }).animate({ Counter: $this.text() }, {
-					   	duration: cfg.statsDuration,
-					   	easing: 'swing',
-					   	step: function (curValue) {
-					      	$this.text(Math.ceil(curValue));
-					    	}
-					  	});
-					});
-	       	} 
-
-	       	// trigger once only
-	       	this.destroy(); 
-			},	
-			offset: "90%"	
-		});
-
-  	};
-
-
-  	/* Alert Boxes
-  	------------------------------------------------------- */
-  	var ssAlertBoxes = function() {
-
-  		$('.alert-box').on('click', '.close', function() {
-		  $(this).parent().fadeOut(500);
-		}); 
-
-  	};	  	
-	
-
-  /* Animations
-	* ------------------------------------------------------- */
-	var ssAnimations = function() {
-
-		if (!$("html").hasClass('no-cssanimations')) {
-			$('.animate-this').waypoint({
-				handler: function(direction) {
-
-					var defAnimationEfx = cfg.defAnimation;
-
-					if ( direction === 'down' && !$(this.element).hasClass('animated')) {
-						$(this.element).addClass('item-animate');
-
-						setTimeout(function() {
-							$('body .animate-this.item-animate').each(function(ctr) {
-								var el       = $(this),
-								animationEfx = el.data('animate') || null;	
-
-	                  	if (!animationEfx) {
-			                 	animationEfx = defAnimationEfx;	                 	
-			               }
-
-			              	setTimeout( function () {
-									el.addClass(animationEfx + ' animated');
-									el.removeClass('item-animate');
-								}, ctr * 50);
-
-							});								
-						}, 100);
-					}
-
-					// trigger once only
-	       		this.destroy(); 
-				}, 
-				offset: '95%'
-			}); 
+		} else {
+			$('.cd-primary-nav').addClass('is-visible').one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',function(){
+				$('body').addClass('overflow-hidden');
+			});
 		}
-
-	};
-	
-
-  /* Intro Animation
-	* ------------------------------------------------------- */
-	var ssIntroAnimation = function() {
-
-		$WIN.on('load', function() {
-		
-	     	if (!$("html").hasClass('no-cssanimations')) {
-	     		setTimeout(function(){
-	    			$('.animate-intro').each(function(ctr) {
-						var el = $(this),
-	                   animationEfx = el.data('animate') || null;		                                      
-
-	               if (!animationEfx) {
-	                 	animationEfx = cfg.defAnimation;	                 	
-	               }
-
-	              	setTimeout( function () {
-							el.addClass(animationEfx + ' animated');
-						}, ctr * 300);
-					});						
-				}, 100);
-	     	} 
-		}); 
-
-	};
+	});
+});
 
 
-  /* Contact Form
-   * ------------------------------------------------------ */
-   var ssContactForm = function() {   	
+// custom google map settings
+jQuery(document).ready(function($){
+	//set your google maps parameters
+	var latitude = 40.745657,
+		longitude = -73.971092,
+		map_zoom = 16;
 
-   	/* local validation */   	
-		$('#contactForm').validate({
+	//google map custom marker icon - .png fallback for IE11
+	var is_internetExplorer11= navigator.userAgent.toLowerCase().indexOf('trident') > -1;
+	var marker_url = ( is_internetExplorer11 ) ? 'http://static.tumblr.com/nq57dhw/BgPoo0myf/logo-elegant.png' : 'http://static.tumblr.com/1ccbc9v/JWhncd6gz/cd-icon-location.svg';
 
-			/* submit via ajax */
-			submitHandler: function(form) {				
-				var sLoader = $('#submit-loader');			
+	//define the basic color of your map, plus a value for saturation and brightness
+	var	main_color = '#2d313f',
+		saturation_value= -20,
+		brightness_value= 5;
 
-				$.ajax({   	
-			      type: "POST",
-			      url: "inc/sendEmail.php",
-			      data: $(form).serialize(),
+	//we define here the style of the map
+	var style= [
+		{
+			//set saturation for the labels on the map
+			elementType: "labels",
+			stylers: [
+				{saturation: saturation_value}
+			]
+		},
+	    {	//poi stands for point of interest - don't show these lables on the map
+			featureType: "poi",
+			elementType: "labels",
+			stylers: [
+				{visibility: "off"}
+			]
+		},
+		{
+			//don't show highways lables on the map
+	        featureType: 'road.highway',
+	        elementType: 'labels',
+	        stylers: [
+	            {visibility: "off"}
+	        ]
+	    },
+		{
+			//don't show local road lables on the map
+			featureType: "road.local",
+			elementType: "labels.icon",
+			stylers: [
+				{visibility: "off"}
+			]
+		},
+		{
+			//don't show arterial road lables on the map
+			featureType: "road.arterial",
+			elementType: "labels.icon",
+			stylers: [
+				{visibility: "off"}
+			]
+		},
+		{
+			//don't show road lables on the map
+			featureType: "road",
+			elementType: "geometry.stroke",
+			stylers: [
+				{visibility: "off"}
+			]
+		},
+		//style different elements on the map
+		{
+			featureType: "transit",
+			elementType: "geometry.fill",
+			stylers: [
+				{ hue: main_color },
+				{ visibility: "on" },
+				{ lightness: brightness_value },
+				{ saturation: saturation_value }
+			]
+		},
+		{
+			featureType: "poi",
+			elementType: "geometry.fill",
+			stylers: [
+				{ hue: main_color },
+				{ visibility: "on" },
+				{ lightness: brightness_value },
+				{ saturation: saturation_value }
+			]
+		},
+		{
+			featureType: "poi.government",
+			elementType: "geometry.fill",
+			stylers: [
+				{ hue: main_color },
+				{ visibility: "on" },
+				{ lightness: brightness_value },
+				{ saturation: saturation_value }
+			]
+		},
+		{
+			featureType: "poi.sport_complex",
+			elementType: "geometry.fill",
+			stylers: [
+				{ hue: main_color },
+				{ visibility: "on" },
+				{ lightness: brightness_value },
+				{ saturation: saturation_value }
+			]
+		},
+		{
+			featureType: "poi.attraction",
+			elementType: "geometry.fill",
+			stylers: [
+				{ hue: main_color },
+				{ visibility: "on" },
+				{ lightness: brightness_value },
+				{ saturation: saturation_value }
+			]
+		},
+		{
+			featureType: "poi.business",
+			elementType: "geometry.fill",
+			stylers: [
+				{ hue: main_color },
+				{ visibility: "on" },
+				{ lightness: brightness_value },
+				{ saturation: saturation_value }
+			]
+		},
+		{
+			featureType: "transit",
+			elementType: "geometry.fill",
+			stylers: [
+				{ hue: main_color },
+				{ visibility: "on" },
+				{ lightness: brightness_value },
+				{ saturation: saturation_value }
+			]
+		},
+		{
+			featureType: "transit.station",
+			elementType: "geometry.fill",
+			stylers: [
+				{ hue: main_color },
+				{ visibility: "on" },
+				{ lightness: brightness_value },
+				{ saturation: saturation_value }
+			]
+		},
+		{
+			featureType: "landscape",
+			stylers: [
+				{ hue: main_color },
+				{ visibility: "on" },
+				{ lightness: brightness_value },
+				{ saturation: saturation_value }
+			]
 
-			      beforeSend: function() { 
-			      	sLoader.fadeIn(); 
-			      },
-			      success: function(msg) {
-		            // Message was sent
-		            if (msg == 'OK') {
-		            	sLoader.fadeOut(); 
-		               $('#message-warning').hide();
-		               $('#contactForm').fadeOut();
-		               $('#message-success').fadeIn();   
-		            }
-		            // There was an error
-		            else {
-		            	sLoader.fadeOut(); 
-		               $('#message-warning').html(msg);
-			            $('#message-warning').fadeIn();
-		            }
-			      },
-			      error: function() {
-			      	sLoader.fadeOut(); 
-			      	$('#message-warning').html("Something went wrong. Please try again.");
-			         $('#message-warning').fadeIn();
-			      }
-		      });    		
-	  		}
+		},
+		{
+			featureType: "road",
+			elementType: "geometry.fill",
+			stylers: [
+				{ hue: main_color },
+				{ visibility: "on" },
+				{ lightness: brightness_value },
+				{ saturation: saturation_value }
+			]
+		},
+		{
+			featureType: "road.highway",
+			elementType: "geometry.fill",
+			stylers: [
+				{ hue: main_color },
+				{ visibility: "on" },
+				{ lightness: brightness_value },
+				{ saturation: saturation_value }
+			]
+		},
+		{
+			featureType: "water",
+			elementType: "geometry",
+			stylers: [
+				{ hue: main_color },
+				{ visibility: "on" },
+				{ lightness: brightness_value },
+				{ saturation: saturation_value }
+			]
+		}
+	];
 
+	//set google map options
+	var map_options = {
+      	center: new google.maps.LatLng(latitude, longitude),
+      	zoom: map_zoom,
+      	panControl: false,
+      	zoomControl: false,
+      	mapTypeControl: false,
+      	streetViewControl: false,
+      	mapTypeId: google.maps.MapTypeId.ROADMAP,
+      	scrollwheel: false,
+      	styles: style,
+    }
+    //inizialize the map
+	var map = new google.maps.Map(document.getElementById('google-container'), map_options);
+	//add a custom marker to the map
+	var marker = new google.maps.Marker({
+	  	position: new google.maps.LatLng(latitude, longitude),
+	    map: map,
+	    visible: true,
+	 	icon: marker_url,
+	});
+
+	//add custom buttons for the zoom-in/zoom-out on the map
+	function CustomZoomControl(controlDiv, map) {
+		//grap the zoom elements from the DOM and insert them in the map
+	  	var controlUIzoomIn= document.getElementById('cd-zoom-in'),
+	  		controlUIzoomOut= document.getElementById('cd-zoom-out');
+	  	controlDiv.appendChild(controlUIzoomIn);
+	  	controlDiv.appendChild(controlUIzoomOut);
+
+		// Setup the click event listeners and zoom-in or out according to the clicked element
+		google.maps.event.addDomListener(controlUIzoomIn, 'click', function() {
+		    map.setZoom(map.getZoom()+1)
 		});
-   };	
-
- 
-  /* Back to Top
-	* ------------------------------------------------------ */
-	var ssBackToTop = function() {
-
-		var pxShow  = 500,         // height on which the button will show
-		fadeInTime  = 400,         // how slow/fast you want the button to show
-		fadeOutTime = 400,         // how slow/fast you want the button to hide
-		scrollSpeed = 300,         // how slow/fast you want the button to scroll to top. can be a value, 'slow', 'normal' or 'fast'
-		goTopButton = $("#go-top")
-
-		// Show or hide the sticky footer button
-		$(window).on('scroll', function() {
-			if ($(window).scrollTop() >= pxShow) {
-				goTopButton.fadeIn(fadeInTime);
-			} else {
-				goTopButton.fadeOut(fadeOutTime);
-			}
+		google.maps.event.addDomListener(controlUIzoomOut, 'click', function() {
+		    map.setZoom(map.getZoom()-1)
 		});
-	};	
+	}
 
+	var zoomControlDiv = document.createElement('div');
+ 	var zoomControl = new CustomZoomControl(zoomControlDiv, map);
 
-
-  /* Initialize
-	* ------------------------------------------------------ */
-	(function ssInit() {
-
-		ssPreloader();
-		ssFitVids();
-		ssMasonryFolio();
-		ssLightGallery();
-		ssMenuOnScrolldown();
-		ssOffCanvas();
-		ssSmoothScroll();
-		ssPlaceholder();
-		ssStatCounter();
-		ssAlertBoxes();
-		ssAnimations();
-		ssIntroAnimation();		
-		ssContactForm();
-		ssBackToTop();
-
-	})();
- 
-
-})(jQuery);
+  	//insert the zoom div on the top left of the map
+  	map.controls[google.maps.ControlPosition.LEFT_TOP].push(zoomControlDiv);
+});
